@@ -20,6 +20,8 @@ namespace TravelRecord.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            //Use maps for Xamarin Forms
+            Xamarin.FormsMaps.Init(this, savedInstanceState);
 
             string dbName = "travel_db.sqlite";
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
