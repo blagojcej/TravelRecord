@@ -25,7 +25,6 @@ namespace TravelRecord
                 Experience = experienceEntry.Text.Trim()
             };
 
-            int rows = 0;
             //Connection to database
             using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
             {
@@ -33,16 +32,16 @@ namespace TravelRecord
                 conn.CreateTable<Post>();
 
                 //Insert into database (How many rows are inserted)
-                rows = conn.Insert(post);
-            }
+                int rows = conn.Insert(post);
 
-            if (rows > 0)
-            {
-                DisplayAlert("Success", "Experience successfully inserted", "OK");
-            }
-            else
-            {
-                DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+                if (rows > 0)
+                {
+                    DisplayAlert("Success", "Experience successfully inserted", "OK");
+                }
+                else
+                {
+                    DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+                }
             }
         }
     }

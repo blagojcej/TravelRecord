@@ -29,6 +29,8 @@ namespace TravelRecord
                 conn.CreateTable<Post>();
 
                 var posts = conn.Table<Post>().ToList();
+
+                postListView.ItemsSource = posts;
             }
         }
     }
