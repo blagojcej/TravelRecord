@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
+using SQLite;
+using TravelRecord.Model;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
@@ -18,7 +20,7 @@ namespace TravelRecord
 			InitializeComponent ();
 		}
 
-        protected async override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -35,6 +37,56 @@ namespace TravelRecord
             //display in the center (1 degree to the right and 1 degree to the left) - first number 2, (1 degree from the top and 1 degree from the bottom) - second number 2
             var span = new MapSpan(center, 2, 2);
             locationsMap.MoveToRegion(span);
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+            {
+                //If table is not exists would be created
+                //We can go to History page before insert any records
+                conn.CreateTable<Post>();
+
+                var posts = conn.Table<Post>().ToList();
+
+                //Pin all history places on map
+                DisplayInMap(posts);
+            }
+        }
+
+        protected override async void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            var locator = CrossGeolocator.Current;
+            locator.PositionChanged -= Locator_PositionChanged;
+            await locator.StopListeningAsync();
+        }
+
+        private void DisplayInMap(List<Post> posts)
+        {
+            foreach (var post in posts)
+            {
+                try
+                {
+                    var position = new Position(post.Latitude, post.Longitude);
+
+                    //Create the pin
+                    var pin = new Pin()
+                    {
+                        Type = PinType.SavedPin,
+                        Position = position,
+                        Label = post.VenueName,
+                        Address = post.Address
+                    };
+                    locationsMap.Pins.Add(pin);
+                }
+                catch (NullReferenceException nre)
+                {
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
         }
 
         private void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
