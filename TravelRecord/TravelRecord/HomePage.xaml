@@ -7,16 +7,20 @@
     <TabbedPage.ToolbarItems>
         <ToolbarItem
             Text="Add"
+            Icon="add.png"
             Clicked="MenuItem_OnClicked">
         </ToolbarItem>
     </TabbedPage.ToolbarItems>
     <local:HistoryPage
         Title="History"
+        Icon="history.png"
         ></local:HistoryPage>
     <local:MapPage
         Title="Map"
+        Icon="map.png"
         ></local:MapPage>
     <local:ProfilePage
         Title="Profile"
+        Icon="profile.png"
         ></local:ProfilePage>
 </TabbedPage>
