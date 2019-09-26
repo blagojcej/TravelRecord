@@ -26,6 +26,10 @@
                 Clicked="LoginButton_OnClicked"
                 Margin="0,50,0,0"
                 Style="{StaticResource normalButton}"></Button>
+        <Button x:Name="registerUserButton"
+                Text="Register"
+                HorizontalOptions="End"
+                Clicked="RegisterUserButton_OnClicked"></Button>
     </StackLayout>
 
 </ContentPage>

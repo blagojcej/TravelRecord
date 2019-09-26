@@ -38,6 +38,8 @@ namespace TravelRecord
             var span = new MapSpan(center, 2, 2);
             locationsMap.MoveToRegion(span);
 
+            #region Getting data from local storage (Sqlite)
+            /*
             using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
             {
                 //If table is not exists would be created
@@ -49,6 +51,14 @@ namespace TravelRecord
                 //Pin all history places on map
                 DisplayInMap(posts);
             }
+            */
+            #endregion Getting data from local storage (Sqlite)
+
+            var posts= await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.CurrentUser.Id)
+                .ToListAsync();
+
+            //Pin all history places on map
+            DisplayInMap(posts);
         }
 
         protected override async void OnDisappearing()

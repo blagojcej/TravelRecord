@@ -18,14 +18,16 @@ namespace TravelRecord
 			InitializeComponent ();
 		}
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            using (SQLiteConnection conn=new SQLiteConnection(App.DatabaseLocation))
-            {
+            //using (SQLiteConnection conn=new SQLiteConnection(App.DatabaseLocation))
+            //{
                 //Get post table and list all posts in table
-                var postTable = conn.Table<Post>().ToList();
+                //var postTable = conn.Table<Post>().ToList();
+                var postTable = await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.CurrentUser.Id)
+                    .ToListAsync();
 
                 //Get all distinct categories using LINQ
                 var categories = (from p in postTable
@@ -53,7 +55,7 @@ namespace TravelRecord
 
                 postCountLabel.Text = postTable.Count.ToString();
 
-            }
+            //}
         }
     }
 }

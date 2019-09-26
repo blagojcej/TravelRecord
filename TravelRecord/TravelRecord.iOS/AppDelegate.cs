@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 
 using Foundation;
+using Microsoft.WindowsAzure.MobileServices;
 using UIKit;
 
 namespace TravelRecord.iOS
@@ -26,6 +27,8 @@ namespace TravelRecord.iOS
             global::Xamarin.Forms.Forms.Init();
             //Use maps for Xamarin Forms
             Xamarin.FormsMaps.Init();
+            //User azure services
+            CurrentPlatform.Init();
 
             string dbName = "travel_db.sqlite";
             // ".." (two dots) navigate to parent of this (Personal) folder

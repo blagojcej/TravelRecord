@@ -18,10 +18,13 @@ namespace TravelRecord
 			InitializeComponent ();
 		}
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
 
+            #region Reading data from local database (Sqlite)
+
+            /*
             using (SQLiteConnection conn=new SQLiteConnection(App.DatabaseLocation))
             {
                 //If table is not exists would be created
@@ -32,6 +35,14 @@ namespace TravelRecord
 
                 postListView.ItemsSource = posts;
             }
+            */
+
+            #endregion Reading data from local database (Sqlite)
+
+            var posts = await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.CurrentUser.Id)
+                .ToListAsync();
+
+            postListView.ItemsSource = posts;
         }
     }
 }
