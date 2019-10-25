@@ -7,6 +7,8 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Microsoft.WindowsAzure.MobileServices;
+using Plugin.CurrentActivity;
+using Plugin.Permissions;
 using Environment = System.Environment;
 
 namespace TravelRecord.Droid
@@ -20,6 +22,9 @@ namespace TravelRecord.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
+
+            // Implement FastRenderers
+            global::Xamarin.Forms.Forms.SetFlags("FastRenderers_Experimental");
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             //Use maps for Xamarin Forms
             Xamarin.FormsMaps.Init(this, savedInstanceState);
@@ -33,6 +38,15 @@ namespace TravelRecord.Droid
             //LoadApplication(new App());
             // New constructor for database location
             LoadApplication(new App(fullPath));
+
+            //CrossCurrentActivity.Current.Init(this, savedInstanceState);
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 }

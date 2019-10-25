@@ -54,8 +54,7 @@ namespace TravelRecord
             */
             #endregion Getting data from local storage (Sqlite)
 
-            var posts= await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.CurrentUser.Id)
-                .ToListAsync();
+            var posts = await Post.Read();
 
             //Pin all history places on map
             DisplayInMap(posts);

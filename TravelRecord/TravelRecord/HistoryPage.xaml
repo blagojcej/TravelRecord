@@ -1,12 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TravelRecord.HistoryPage">
+             x:Class="TravelRecord.HistoryPage"
+             xmlns:converters="clr-namespace:TravelRecord.ViewModel.Converters">
 
-    <ListView x:Name="postListView">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DateTimeToStringConverter x:Key="converter"></converters:DateTimeToStringConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ListView x:Name="postListView"
+              IsPullToRefreshEnabled="True"
+              Refreshing="PostListView_OnRefreshing"
+              ItemsSource="{Binding Posts}">
          <ListView.ItemTemplate>
              <DataTemplate>
-                <TextCell Text="{Binding Experience}"></TextCell>
+                <TextCell 
+                    Text="{Binding Experience}"
+                    Detail="{Binding CREATEDAT, Converter={StaticResource converter}}">
+                    <TextCell.ContextActions>
+                        <MenuItem
+                            CommandParameter="{Binding}"
+                            Text="Delete"
+                            Clicked="MenuItem_OnClicked"
+                            IsDestructive="True"></MenuItem>
+                    </TextCell.ContextActions>
+                </TextCell>
              </DataTemplate>
          </ListView.ItemTemplate>
     </ListView>

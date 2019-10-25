@@ -6,13 +6,17 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Save"
                      Icon="save.png"
-                     Clicked="MenuItem_OnClicked"></ToolbarItem>
+                     Command="{Binding PostCommand}"
+                     CommandParameter="{Binding Post}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout x:Name="containerStackLayout"
+                     CompressedLayout.IsHeadless="true">
             <Entry x:Name="experienceEntry" 
+                   Text="{Binding Experience, Mode=TwoWay}"
                 Placeholder="Write your experience"></Entry>
             <ListView x:Name="venueListView"
+                      SelectedItem="{Binding Venue, Mode=TwoWay}"
                       HorizontalOptions="FillAndExpand"
                       Margin="20, 0">
                 <ListView.ItemTemplate>

@@ -4,90 +4,74 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using SQLite;
-using TravelRecord.Logic;
 using TravelRecord.Model;
+using TravelRecord.ViewModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace TravelRecord
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class NewTravelPage : ContentPage
-	{
-		public NewTravelPage ()
-		{
-			InitializeComponent ();
-		}
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class NewTravelPage : ContentPage
+    {
+        private NewTravelVM viewModel;
+
+        public NewTravelPage()
+        {
+            InitializeComponent();
+            viewModel = new NewTravelVM();
+            BindingContext = viewModel;
+        }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            //Request Venues
-            var locator = CrossGeolocator.Current;
-            var position = await locator.GetPositionAsync();
-
-            var venues = await VenueLogic.GetVenuesAsync(position.Latitude, position.Longitude);
-
-            //Listing into the UI
-            venueListView.ItemsSource = venues;
-        }
-
-        private async void MenuItem_OnClicked(object sender, EventArgs e)
-        {
             try
             {
-                //Get information about seleted venue
-                var selectedVenue = venueListView.SelectedItem as Venue;
-                var firstCategory = selectedVenue.categories.FirstOrDefault();
-
-                Post post = new Post()
+                // Get current status of permission
+                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
+                // If permission is not granted
+                if (status != PermissionStatus.Granted)
                 {
-                    Experience = experienceEntry.Text.Trim(),
-                    CategoryId = firstCategory.id,
-                    CategoryName = firstCategory.name,
-                    Address = selectedVenue.location.address,
-                    Distance = selectedVenue.location.distance,
-                    Latitude = selectedVenue.location.lat,
-                    Longitude = selectedVenue.location.lng,
-                    VenueName = selectedVenue.name,
-                    UserId = App.CurrentUser.Id
-                };
-
-                #region Saving into local Sqlite database
-                //Connection to database
-                /*
-                using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
-                {
-                    //Table where we're going to inserting
-                    conn.CreateTable<Post>();
-
-                    //Insert into database (How many rows are inserted)
-                    int rows = conn.Insert(post);
-
-                    if (rows > 0)
+                    // If current permission need user permission directly
+                    if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Location))
                     {
-                        DisplayAlert("Success", "Experience successfully inserted", "OK");
+                        await DisplayAlert("Need permission", "We will have to access your location", "OK");
                     }
-                    else
+
+                    // After requesting permission, try get permission
+                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
+                    // Check if permission is allowed
+                    if (results.ContainsKey(Permission.Location))
                     {
-                        DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+                        status = results[Permission.Location];
                     }
                 }
-                */
-                #endregion Saving into local Sqlite database
 
-                await App.MobileService.GetTable<Post>().InsertAsync(post);
-                await DisplayAlert("Success", "Experience successfully inserted", "OK");
+                if (status == PermissionStatus.Granted)
+                {
+
+                    //Request Venues
+                    var locator = CrossGeolocator.Current;
+                    var position = await locator.GetPositionAsync();
+
+                    var venues = await Venue.GetVenuesAsync(position.Latitude, position.Longitude);
+
+                    //Listing into the UI
+                    venueListView.ItemsSource = venues;
+                }
+                else
+                {
+                    await DisplayAlert("Need permission", "We will have to access your location", "OK");
+                }
             }
-            catch (NullReferenceException nre)
+            catch (Exception e)
             {
-                await DisplayAlert("Failure", "Experience failed to be inserted", "OK");
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+
             }
         }
     }

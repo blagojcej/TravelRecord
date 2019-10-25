@@ -24,6 +24,8 @@ namespace TravelRecord.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            // Implement FastRenderers
+            global::Xamarin.Forms.Forms.SetFlags("FastRenderers_Experimental");
             global::Xamarin.Forms.Forms.Init();
             //Use maps for Xamarin Forms
             Xamarin.FormsMaps.Init();

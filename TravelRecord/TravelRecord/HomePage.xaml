@@ -8,7 +8,7 @@
         <ToolbarItem
             Text="Add"
             Icon="add.png"
-            Clicked="MenuItem_OnClicked">
+            Command="{Binding NavCommand}">
         </ToolbarItem>
     </TabbedPage.ToolbarItems>
     <local:HistoryPage

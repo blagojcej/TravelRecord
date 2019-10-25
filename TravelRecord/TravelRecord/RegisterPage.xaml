@@ -2,25 +2,30 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TravelRecord.RegisterPage">
-    <StackLayout 
+    <StackLayout x:Name="containerStackLayout"
+        CompressedLayout.IsHeadless="true"
         VerticalOptions="Center"
         Margin="20,0,20,0">
         <!-- Place new controls here -->
         <Entry  x:Name="emailEntry"
+                Text="{Binding Email ,Mode=TwoWay}"
                 Placeholder="Email address" 
                 TextColor="{StaticResource blueColor}"
                 Keyboard="Email"></Entry>
         <Entry x:Name="passwordEntry"
+               Text="{Binding Password ,Mode=TwoWay}"
                Placeholder="Password" 
                TextColor="{StaticResource blueColor}"
                IsPassword="True"></Entry>
         <Entry x:Name="confirmPasswordEntry"
+               Text="{Binding ConfirmPassword, Mode=TwoWay}"
                Placeholder="Confirm password" 
                TextColor="{StaticResource blueColor}"
                IsPassword="True"></Entry>
-        <Button x:Name="registerButton" 
+        <Button x:Name="registerButton"
+                Command="{Binding RegisterCommand}"
+                CommandParameter="{Binding User}"
                 Text="Register"
-                Clicked="RegisterButton_OnClicked"
                 Margin="0,50,0,0"
                 Style="{StaticResource normalButton}"></Button>
     </StackLayout>

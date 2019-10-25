@@ -1,24 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using TravelRecord.Helpers;
 using TravelRecord.Model;
+using TravelRecord.ViewModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace TravelRecord
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class HistoryPage : ContentPage
-	{
-		public HistoryPage ()
-		{
-			InitializeComponent ();
-		}
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class HistoryPage : ContentPage
+    {
+        private HistoryVM viewModel;
 
-        protected async override void OnAppearing()
+        public HistoryPage()
+        {
+            InitializeComponent();
+            viewModel=new HistoryVM();
+            BindingContext = viewModel;
+        }
+
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -39,10 +46,30 @@ namespace TravelRecord
 
             #endregion Reading data from local database (Sqlite)
 
-            var posts = await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.CurrentUser.Id)
-                .ToListAsync();
+            await viewModel.UpdatePosts();
 
-            postListView.ItemsSource = posts;
+            // Synchronize local andcloud database
+            await AzureAppServiceHelper.SyncAsync();
+        }
+
+        private async void MenuItem_OnClicked(object sender, EventArgs e)
+        {
+            var post = (Post)((MenuItem) sender).CommandParameter;
+            viewModel.DeletePost(post);
+
+            // After deleting refresh list
+            await viewModel.UpdatePosts();
+        }
+
+        private async void PostListView_OnRefreshing(object sender, EventArgs e)
+        {
+            await viewModel.UpdatePosts();
+
+            // Synchronize local andcloud database
+            await AzureAppServiceHelper.SyncAsync();
+
+            postListView.EndRefresh();
+            //postListView.IsRefreshing = false; // same as calling function above
         }
     }
 }

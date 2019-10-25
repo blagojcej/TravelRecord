@@ -6,6 +6,7 @@
 
     <StackLayout 
         VerticalOptions="Center"
+        CompressedLayout.IsHeadless="true"
         Margin="20,0,20,0">
         <!-- Place new controls here -->
         <Image x:Name="iconImage"
@@ -14,22 +15,25 @@
                Margin="0,0,0,50"
                HeightRequest="150"></Image>
         <Entry  x:Name="emailEntry"
+                Text="{Binding Email, Mode=TwoWay}"
             Placeholder="Email address" 
             TextColor="{StaticResource blueColor}"
             Keyboard="Email"></Entry>
         <Entry x:Name="passwordEntry"
+               Text="{Binding Password, Mode=TwoWay}"
             Placeholder="Password" 
             TextColor="{StaticResource blueColor}"
             IsPassword="True"></Entry>
-        <Button x:Name="LoginButton" 
+        <Button x:Name="LoginButton"
+                Command="{Binding LoginCommand}"
+                CommandParameter="{Binding User}"
                 Text="Log in" 
-                Clicked="LoginButton_OnClicked"
                 Margin="0,50,0,0"
                 Style="{StaticResource normalButton}"></Button>
         <Button x:Name="registerUserButton"
+                Command="{Binding RegisterNavigationCommand}"
                 Text="Register"
-                HorizontalOptions="End"
-                Clicked="RegisterUserButton_OnClicked"></Button>
+                HorizontalOptions="End"></Button>
     </StackLayout>
 
 </ContentPage>

@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.WindowsAzure.MobileServices;
+using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
+using Microsoft.WindowsAzure.MobileServices.Sync;
 using TravelRecord.Model;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,6 +15,8 @@ namespace TravelRecord
 
         public static MobileServiceClient MobileService =
             new MobileServiceClient("https://apptravelrecord.azurewebsites.net");
+
+        public static IMobileServiceSyncTable<Post> postsTable;
 
         public static User CurrentUser = new User();
 
@@ -32,6 +36,18 @@ namespace TravelRecord
             MainPage = new NavigationPage(new MainPage());
 
             DatabaseLocation = databaseLocation;
+
+            //** Sync local and central databas
+            // Configure database location
+            var store = new MobileServiceSQLiteStore(databaseLocation);
+            // Create the local table
+            store.DefineTable<Post>();
+            // How to sync local and central database
+            // Initialize sync service
+            MobileService.SyncContext.InitializeAsync(store);
+            // Get table first from local storage, then from cloud
+            postsTable = MobileService.GetSyncTable<Post>();
+            //**
         }
 
         protected override void OnStart()
